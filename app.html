@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Shekels App</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #d9f2ff;
+      --toolbar: #bfe6ff;
+      --card: #ffffff;
+      --card-shadow: rgba(0,0,0,0.12);
+      --accent: #4facfe;
+      --accent2: #00f2fe;
+      --text: #111111;
+      --text-muted: #444444;
+      --input-bg: #ffffff;
+      --input-border: #aaaaaa;
+      --progress-bg: #dddddd;
+      --today-bg: #d4f8d4;
+      --calendar-day-bg: #f5fbff;
+      --calendar-header-bg: #d0ecff;
+      --calendar-border: #dddddd;
+      --entry-counter-bg: #eeeeff;
+      --highlight-border: #007bff;
+      --highlight-bg: #cfe9ff;
+      --handle-bg: #e0f0ff;
+    }
+    body.theme-dark {
+      --bg:#1a1a2e;--toolbar:#16213e;--card:#0f3460;--card-shadow:rgba(0,0,0,.5);
+      --accent:#e94560;--accent2:#f5a623;--text:#f0f0f0;--text-muted:#cccccc;
+      --input-bg:#1a1a3e;--input-border:#555577;--progress-bg:#333355;--today-bg:#1e4d2b;
+      --calendar-day-bg:#1a2a4a;--calendar-header-bg:#0f3460;--calendar-border:#334466;
+      --entry-counter-bg:#2a2a5a;--highlight-border:#e94560;--highlight-bg:#2a1a3e;--handle-bg:#0a2040;
+    }
+    body.theme-green {
+      --bg:#e8f5e9;--toolbar:#c8e6c9;--card:#fff;--accent:#43a047;--accent2:#66bb6a;
+      --text:#1b5e20;--text-muted:#2e7d32;--input-bg:#f9fff9;--input-border:#a5d6a7;
+      --progress-bg:#dcedc8;--today-bg:#b9f6ca;--calendar-day-bg:#f1f8e9;
+      --calendar-header-bg:#c8e6c9;--calendar-border:#a5d6a7;--entry-counter-bg:#dcedc8;
+      --highlight-border:#1b5e20;--highlight-bg:#b9f6ca;--handle-bg:#c8e6c9;
+    }
+    body.theme-purple {
+      --bg:#ede7f6;--toolbar:#d1c4e9;--card:#fff;--accent:#7c4dff;--accent2:#b388ff;
+      --text:#311b92;--text-muted:#4527a0;--input-bg:#f9f7ff;--input-border:#b39ddb;
+      --progress-bg:#d1c4e9;--today-bg:#e8d5ff;--calendar-day-bg:#f3e5f5;
+      --calendar-header-bg:#d1c4e9;--calendar-border:#b39ddb;--entry-counter-bg:#ede7f6;
+      --highlight-border:#7c4dff;--highlight-bg:#e8d5ff;--handle-bg:#d1c4e9;
+    }
+    body.theme-sunset {
+      --bg:#fff3e0;--toolbar:#ffe0b2;--card:#fff;--accent:#ff6f00;--accent2:#ff8f00;
+      --text:#bf360c;--text-muted:#e64a19;--input-bg:#fff8f0;--input-border:#ffcc80;
+      --progress-bg:#ffe0b2;--today-bg:#ffe0b2;--calendar-day-bg:#fff8f0;
+      --calendar-header-bg:#ffcc80;--calendar-border:#ffb74d;--entry-counter-bg:#ffe0b2;
+      --highlight-border:#ff6f00;--highlight-bg:#fff3e0;--handle-bg:#ffe0b2;
+    }
+    body.theme-forest {
+      --bg:#e0ede0;--toolbar:#b5d5b5;--card:#f5fff5;--accent:#2e7d32;--accent2:#558b2f;
+      --text:#1b3a1b;--text-muted:#33691e;--input-bg:#f0faf0;--input-border:#81c784;
+      --progress-bg:#c8e6c9;--today-bg:#a5d6a7;--calendar-day-bg:#e8f5e9;
+      --calendar-header-bg:#b5d5b5;--calendar-border:#81c784;--entry-counter-bg:#c8e6c9;
+      --highlight-border:#2e7d32;--highlight-bg:#a5d6a7;--handle-bg:#b5d5b5;
+    }
+    body.theme-ocean {
+      --bg:#e0f7fa;--toolbar:#b2ebf2;--card:#fff;--accent:#00838f;--accent2:#00bcd4;
+      --text:#006064;--text-muted:#00838f;--input-bg:#f0fdff;--input-border:#80deea;
+      --progress-bg:#b2ebf2;--today-bg:#80deea;--calendar-day-bg:#e0f7fa;
+      --calendar-header-bg:#b2ebf2;--calendar-border:#80deea;--entry-counter-bg:#b2ebf2;
+      --highlight-border:#00838f;--highlight-bg:#b2ebf2;--handle-bg:#b2ebf2;
+    }
+    body.theme-midnight {
+      --bg:#0d0d1a;--toolbar:#12122a;--card:#1a1a35;--card-shadow:rgba(0,0,0,.7);
+      --accent:#4f8afe;--accent2:#00c6ff;--text:#e8eaf6;--text-muted:#9fa8da;
+      --input-bg:#12122a;--input-border:#3f3f7a;--progress-bg:#1a1a35;--today-bg:#1a2a5a;
+      --calendar-day-bg:#12122a;--calendar-header-bg:#1a1a35;--calendar-border:#3f3f7a;
+      --entry-counter-bg:#1a1a35;--highlight-border:#4f8afe;--highlight-bg:#1a2a5a;--handle-bg:#0a0a20;
+    }
+    body.theme-neon {
+      --bg:#0a0a0a;--toolbar:#111;--card:#181818;--card-shadow:rgba(0,255,180,.15);
+      --accent:#00ffb3;--accent2:#ff00ff;--text:#00ffb3;--text-muted:#ff00ff;
+      --input-bg:#0d0d0d;--input-border:#00ffb3;--progress-bg:#1a1a0a;--today-bg:#001a10;
+      --calendar-day-bg:#111;--calendar-header-bg:#001a10;--calendar-border:#00ffb3;
+      --entry-counter-bg:#001a10;--highlight-border:#ff00ff;--highlight-bg:#1a001a;--handle-bg:#050505;
+    }
+    body.theme-mocha {
+      --bg:#f5ede0;--toolbar:#e8d5bb;--card:#fdf6ee;--accent:#7b4f2e;--accent2:#a0714f;
+      --text:#3e1f00;--text-muted:#6d3b1e;--input-bg:#fff9f2;--input-border:#c9a882;
+      --progress-bg:#e8d5bb;--today-bg:#d4b896;--calendar-day-bg:#fdf6ee;
+      --calendar-header-bg:#e8d5bb;--calendar-border:#c9a882;--entry-counter-bg:#e8d5bb;
+      --highlight-border:#7b4f2e;--highlight-bg:#d4b896;--handle-bg:#e8d5bb;
+    }
+    body.theme-candy {
+      --bg:#fff0f9;--toolbar:#ffd6f0;--card:#fff;--accent:#e040fb;--accent2:#f48fb1;
+      --text:#880e4f;--text-muted:#ad1457;--input-bg:#fff5fc;--input-border:#f48fb1;
+      --progress-bg:#ffd6f0;--today-bg:#f8bbd0;--calendar-day-bg:#fff0f9;
+      --calendar-header-bg:#ffd6f0;--calendar-border:#f48fb1;--entry-counter-bg:#ffd6f0;
+      --highlight-border:#e040fb;--highlight-bg:#f8bbd0;--handle-bg:#ffd6f0;
+    }
+
+    /* ===== BASE ===== */
+    * { box-sizing: border-box; }
+    body, input, select, button, textarea {
+      font-family: Arial, sans-serif;
+      margin: 0;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ===== TOOLBAR ===== */
+    .toolbar {
+      background: var(--toolbar);
+      padding: 8px 14px;
+      display: flex;
+      gap: 10px;
+      border-bottom: 2px solid var(--input-border);
+      align-items: center;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 2000;
+    }
+
+    /* ===== DROPDOWNS ===== */
+    .dropdown { position: relative; display: inline-block; }
+    .dropdown-btn {
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--input-border);
+      padding: 6px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      user-select: none;
+    }
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      background: var(--card);
+      color: var(--text);
+      min-width: 190px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.28);
+      border-radius: 8px;
+      z-index: 9999;
+      border: 1px solid var(--input-border);
+      max-height: 420px;
+      overflow-y: auto;
+    }
+    .dropdown-menu.open { display: block; }
+
+    .dropdown-menu .menu-btn {
+      width: 100%; text-align: left; padding: 10px 14px;
+      background: var(--card); color: var(--text);
+      border: none; border-bottom: 1px solid var(--input-border);
+      cursor: pointer; font-size: 14px; display: block;
+    }
+    .dropdown-menu .menu-btn:last-child { border-bottom: none; }
+    .dropdown-menu .menu-btn:hover { background: var(--toolbar); }
+
+    .dropdown-menu .menu-label {
+      display: block; padding: 8px 14px 2px;
+      font-size: 11px; font-weight: bold;
+      color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .dropdown-menu select,
+    .dropdown-menu input[type="range"] {
+      width: 100%; padding: 7px 10px;
+      background: var(--input-bg); color: var(--text);
+      border: none; border-bottom: 1px solid var(--input-border);
+      font-size: 13px; display: block;
+    }
+
+    /* ===== FREE CANVAS ===== */
+    #canvas {
+      position: relative;
+      width: 100%;
+      min-height: calc(100vh - 50px);
+    }
+
+    /* ===== CARDS ===== */
+    .card {
+      position: absolute;
+      background: var(--card);
+      border-radius: 10px;
+      box-shadow: 0 2px 10px var(--card-shadow);
+      min-width: 180px;
+      min-height: 80px;
+      overflow: hidden;
+      resize: both;
+      display: flex;
+      flex-direction: column;
+    }
+    .card.is-dragging {
+      opacity: 0.82;
+      box-shadow: 0 10px 35px var(--card-shadow);
+      z-index: 1000 !important;
+    }
+    .card-handle {
+      background: var(--handle-bg);
+      padding: 5px 10px;
+      cursor: grab;
+      font-size: 12px;
+      color: var(--text-muted);
+      user-select: none;
+      border-bottom: 1px solid var(--input-border);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    .card-handle:active { cursor: grabbing; }
+    .card-content {
+      padding: 10px 12px 12px;
+      flex: 1 1 0;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-height: 0;
+    }
+    h2 {
+      margin: 0;
+      color: var(--text);
+      font-size: 1em;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    input[type="number"],
+    input[type="text"] {
+      width: 100%;
+      padding: 5px;
+      background: var(--input-bg);
+      color: var(--text);
+      border: 1px solid var(--input-border);
+      border-radius: 5px;
+      flex-shrink: 0;
+    }
+    label.field-label {
+      font-size: 0.85em;
+      color: var(--text-muted);
+      margin-bottom: -4px;
+      flex-shrink: 0;
+    }
+    .add-btn {
+      width: 80%;
+      min-height: 30px;
+      font-size: 1.4em;
+      font-weight: bold;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      color: #fff;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      align-self: center;
+      margin-top: 10px;
+    }
+    .progress-container {
+      background: var(--progress-bg);
+      border-radius: 10px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .progress-bar {
+      height: 22px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #fff;
+      transition: width 0.4s;
+      white-space: nowrap;
+      font-size: 0.85em;
+    }
+    .info-text {
+      font-size: 0.85em;
+      color: var(--text);
+      flex-shrink: 0;
+    }
+    .today-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      gap: 10px;
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+    .today-total-box, .avg-box {
+      background: var(--today-bg);
+      padding: 8px 12px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      flex: 1;
+    }
+    .big-num {
+      font-size: clamp(18px, 4vw, 36px);
+      font-weight: 900;
+      color: var(--text);
+    }
+    .box-label {
+      font-size: 0.75em;
+      color: var(--text-muted);
+      font-weight: bold;
+    }
+    .entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .entry-counter {
+      font-size: 0.8em;
+      font-weight: bold;
+      background: var(--entry-counter-bg);
+      color: var(--text);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .monthly-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1 1 auto;
+    }
+    .money-row {
+      background: var(--today-bg);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      justify-content: center;
+    }
+    .money-row .big-num { font-size: clamp(16px, 3.5vw, 32px); }
+    #biggestEntry {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: var(--text);
+      margin-top: 8px;
+      text-align: center;
+    }
+    #card-lastentry {
+      left: 680px;
+      top: 20px;
+      width: 300px;
+      height: 100px;
+    }
+    #card-lastentry h2 {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin: 0;
+      padding: 0 0 8px 0;
+    }
+    #lastEntryDisplay {
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+    .calendar-wrapper {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: auto;
+    }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+      height: 100%;
+    }
+    .calendar-day {
+      background: var(--calendar-day-bg);
+      border: 1px solid var(--calendar-border);
+      padding: 4px 5px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: pre-line;
+      color: var(--text);
+      overflow: hidden;
+    }
+    .calendar-header {
+      font-weight: bold;
+      text-align: center;
+      background: var(--calendar-header-bg);
+      font-size: 12px;
+      padding: 4px 2px;
+    }
+    .today-highlight {
+      border: 2px solid var(--highlight-border);
+      background: var(--highlight-bg);
+    }
+    .chart-wrapper {
+      flex: 1 1 auto;
+      min-height: 0;
+      position: relative;
+    }
+    #chart { width: 100% !important; height: 100% !important; }
+    #card-goal h2 {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin: 0 0 10px 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="dropdown" id="dd-file">
+    <button class="dropdown-btn" onclick="toggleMenu('file')">File ▾</button>
+    <div class="dropdown-menu" id="menu-file">
+      <button class="menu-btn" onclick="saveLocal()">💾 Save</button>
+      <button class="menu-btn" onclick="saveAsFile()">📁 Save As…</button>
+      <button class="menu-btn" onclick="loadFromFile()">📂 Load File…</button>
+      <button class="menu-btn" onclick="clearData()">🆕 New</button>
+    </div>
+  </div>
+
+  <div class="dropdown" id="dd-settings">
+    <button class="dropdown-btn" onclick="toggleMenu('settings')">Settings ▾</button>
+    <div class="dropdown-menu" id="menu-settings">
+      <span class="menu-label">Theme</span>
+      <select id="themeSelect" onchange="changeTheme(this.value)">
+        <option value="default">☀️ Default</option>
+        <option value="dark">🌑 Dark</option>
+        <option value="green">🌿 Green</option>
+        <option value="purple">💜 Purple</option>
+        <option value="sunset">🌅 Sunset</option>
+        <option value="forest">🌲 Forest</option>
+        <option value="ocean">🌊 Ocean</option>
+        <option value="midnight">🌃 Midnight</option>
+        <option value="neon">⚡ Neon</option>
+        <option value="mocha">☕ Mocha</option>
+        <option value="candy">🍬 Candy</option>
+      </select>
+      <span class="menu-label">Font</span>
+      <select id="fontSelect" onchange="changeFont(this.value)">
+        <option value="Arial, sans-serif">Arial</option>
+        <option value="Verdana, sans-serif">Verdana</option>
+        <option value="Georgia, serif">Georgia</option>
+        <option value="'Courier New', monospace">Courier New</option>
+        <option value="Tahoma, sans-serif">Tahoma</option>
+        <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+        <option value="'Segoe UI', sans-serif">Segoe UI</option>
+      </select>
+      <span class="menu-label">Font Size</span>
+      <input type="range" min="12" max="22" value="16" id="fontSizeRange" oninput="changeFontSize(this.value)">
+    </div>
+  </div>
+
+  <div class="dropdown" id="dd-lastentry">
+    <button class="dropdown-btn" onclick="toggleMenu('lastentry')">Last Entry ▾</button>
+    <div class="dropdown-menu" id="menu-lastentry">
+      <div id="lastEntryTime" style="padding: 10px; font-size: 1em; color: var(--text);">No entries yet.</div>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="fileInput" accept=".json" style="display:none" onchange="handleFileLoad(event)">
+
+<div id="canvas">
+
+  <div class="card" id="card-entry" style="left:20px;top:20px;width:300px;height:300px;">
+    <div class="card-handle">⠿ Add Entry</div>
+    <div class="card-content">
+      <div class="entry-header">
+        <h2>Add Entry 💰</h2>
+        <div id="entryCount" class="entry-counter">Entries: 0</div>
+      </div>
+      <label class="field-label">Shekels</label>
+      <input id="shekelsInput" type="number" placeholder="0">
+      <label class="field-label">Hours</label>
+      <input id="hoursInput" type="number" placeholder="0">
+      <label class="field-label">Minutes</label>
+      <input id="minutesInput" type="number" placeholder="0">
+      <button class="add-btn" onclick="addEntry()">Add $$$ 🪙</button>
+    </div>
+  </div>
+
+  <div class="card" id="card-goal" style="left:340px;top:20px;width:310px;height:230px;">
+    <div class="card-handle">⠿ Weekly Goal</div>
+    <div class="card-content">
+      <h2>Weekly Goal 🏆</h2>
+      <label class="field-label">Weekly Goal ($)</label>
+      <input id="goalInput" type="number" value="700">
+      <div class="progress-container">
+        <div id="progressBar" class="progress-bar">0%</div>
+      </div>
+      <div id="progressText" class="info-text"></div>
+      <div id="remainingText" class="info-text"></div>
+      <div id="countdown" class="info-text"></div>
+    </div>
+  </div>
+
+  <div class="card" id="card-today" style="left:20px;top:340px;width:300px;height:160px;">
+    <div class="card-handle">⠿ Today</div>
+    <div class="card-content">
+      <h2>Today 💵</h2>
+      <div class="today-flex">
+        <div class="today-total-box">
+          <div class="box-label">TOTAL</div>
+          <div class="big-num" id="todayTotal">$0.00</div>
+        </div>
+        <div class="avg-box">
+          <div class="box-label">AVG / HOUR</div>
+          <div class="big-num" id="todayAvg">$0.00</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="card-monthly" style="left:340px;top:270px;width:310px;height:300px;">
+    <div class="card-handle">⠿ Monthly / Yearly</div>
+    <div class="card-content">
+      <h2>Monthly / Yearly 💰</h2>
+      <div class="monthly-grid">
+        <div class="money-row">
+          <div class="box-label">THIS MONTH</div>
+          <div class="big-num" id="monthlyDisplay">$0.00</div>
+        </div>
+        <div class="money-row">
+          <div class="box-label">THIS YEAR</div>
+          <div class="big-num" id="yearlyDisplay">$0.00</div>
+        </div>
+        <h2>Biggest Entry 💰</h2>
+        <div id="biggestEntry">$0.00</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="card-chart" style="left:20px;top:520px;width:300px;height:260px;">
+    <div class="card-handle">⠿ Chart</div>
+    <div class="card-content">
+      <h2>Chart 📈</h2>
+      <div class="chart-wrapper">
+        <canvas id="chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="card-calendar" style="left:340px;top:450px;width:500px;height:320px;">
+    <div class="card-handle">⠿ Calendar</div>
+    <div class="card-content">
+      <h2 id="calendarTitle">Calendar</h2>
+      <div class="calendar-wrapper">
+        <div class="calendar" id="calendar"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="card-lastentry" style="left:680px;top:20px;width:300px;height:100px;">
+    <div class="card-handle">⠿ Last Entry</div>
+    <div class="card-content">
+      <h2>Last Entry Time & Date</h2>
+      <div id="lastEntryDisplay">No entries yet.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ===== LOCAL DATE HELPER (FIX) =====
+  function formatLocalDate(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  // ===== STATE =====
+  let data = { entries:{}, goal:700, theme:'default', font:'Arial, sans-serif', fontSize:16 };
+  const today = formatLocalDate(new Date());
+  let chartObj;
+  let biggestEntryAmount = 0;
+  let lastEntryTimestamp = null;
+
+  function toggleMenu(which) {
+    const menu = document.getElementById('menu-' + which);
+    const isOpen = menu.classList.contains('open');
+    document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('open'));
+    if (!isOpen) menu.classList.add('open');
+  }
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.dropdown'))
+      document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('open'));
+  });
+
+  (function() {
+    let dragging=null, ox=0, oy=0;
+    document.addEventListener('mousedown', e => {
+      const handle = e.target.closest('.card-handle');
+      if (!handle) return;
+      const card = handle.closest('.card');
+      dragging = card;
+      card.classList.add('is-dragging');
+      const cr  = card.getBoundingClientRect();
+      const cvr = document.getElementById('canvas').getBoundingClientRect();
+      ox = e.clientX - (cr.left - cvr.left);
+      oy = e.clientY - (cr.top  - cvr.top);
+      document.querySelectorAll('.card').forEach(c => c.style.zIndex=1);
+      card.style.zIndex = 100;
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', e => {
+      if (!dragging) return;
+      const cvr = document.getElementById('canvas').getBoundingClientRect();
+      dragging.style.left = Math.max(0, e.clientX - cvr.left - ox) + 'px';
+      dragging.style.top  = Math.max(0, e.clientY - cvr.top  - oy) + 'px';
+    });
+    document.addEventListener('mouseup', () => {
+      if (!dragging) return;
+      dragging.classList.remove('is-dragging');
+      dragging = null;
+    });
+  })();
+
+  function changeTheme(theme) {
+    ['dark','green','purple','sunset','forest','ocean','midnight','neon','mocha','candy']
+      .forEach(t => document.body.classList.remove('theme-'+t));
+    if (theme !== 'default') document.body.classList.add('theme-'+theme);
+    data.theme = theme;
+    if (chartObj) updateChart();
+  }
+
+  function changeFont(font) {
+    document.body.style.fontFamily = font;
+    document.querySelectorAll('input, select, button, textarea').forEach(el => {
+      el.style.fontFamily = font;
+    });
+    data.font = font;
+  }
+
+  function changeFontSize(size) {
+    document.documentElement.style.fontSize = size + 'px';
+    data.fontSize = Number(size);
+  }
+
+  function saveLocal() {
+    saveCardPositions();
+    localStorage.setItem('shekelsApp', JSON.stringify(data));
+    alert('Saved!');
+    closeMenus();
+  }
+  function saveAsFile() {
+    saveCardPositions();
+    const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = 'shekels_'+today+'.json'; a.click();
+    URL.revokeObjectURL(url);
+    closeMenus();
+  }
+  function loadFromFile() {
+    document.getElementById('fileInput').click();
+    closeMenus();
+  }
+  function handleFileLoad(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        data = JSON.parse(ev.target.result);
+        applySettings();
+        restoreCardPositions();
+        biggestEntryAmount = 0;
+        lastEntryTimestamp = null;
+        Object.values(data.entries).forEach(entry => {
+          if (entry._timestamp) {
+            if (!lastEntryTimestamp || new Date(entry._timestamp) > new Date(lastEntryTimestamp))
+              lastEntryTimestamp = entry._timestamp;
+          }
+          if (entry.total > biggestEntryAmount) {
+            biggestEntryAmount = entry.total;
+          }
+        });
+        if (lastEntryTimestamp) {
+          document.getElementById('lastEntryDisplay').innerText = new Date(lastEntryTimestamp).toLocaleString();
+        } else {
+          document.getElementById('lastEntryDisplay').innerText = 'No entries yet.';
+        }
+        document.getElementById('biggestEntry').innerText = `$${biggestEntryAmount.toFixed(2)}`;
+        updateAll();
+        alert('Loaded! Showing today: ' + today);
+      } catch(e) {
+        alert('Could not read file. Make sure it is a valid Shekels .json file.');
+      }
+    };
+    reader.readAsText(e.target.files[0]);
+    e.target.value = '';
+  }
+
+  function clearData() {
+    if (!confirm('Start fresh? All entries will be cleared.')) return;
+    data = {entries:{}, goal:700, theme:data.theme, font:data.font, fontSize:data.fontSize};
+    localStorage.removeItem('shekelsApp');
+    biggestEntryAmount = 0;
+    document.getElementById('biggestEntry').innerText = `$0.00`;
+    lastEntryTimestamp = null;
+    document.getElementById('lastEntryDisplay').innerText = 'No entries yet.';
+    updateAll();
+  }
+
+  function closeMenus() {
+    document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('open'));
+  }
+
+  function saveCardPositions() {
+    data.cardPositions = {};
+    document.querySelectorAll('.card').forEach(card => {
+      data.cardPositions[card.id] = {
+        left:   card.style.left,
+        top:    card.style.top,
+        width:  card.offsetWidth + 'px',
+        height: card.offsetHeight + 'px'
+      };
+    });
+  }
+  function restoreCardPositions() {
+    if (!data.cardPositions) return;
+    document.querySelectorAll('.card').forEach(card => {
+      const p = data.cardPositions[card.id];
+      if (!p) return;
+      card.style.left   = p.left;
+      card.style.top    = p.top;
+      card.style.width  = p.width;
+      card.style.height = p.height;
+    });
+  }
+
+  function applySettings() {
+    if (data.theme) {
+      changeTheme(data.theme);
+      const sel = document.getElementById('themeSelect');
+      if (sel) sel.value = data.theme;
+    }
+    if (data.font) {
+      changeFont(data.font);
+      const fs = document.getElementById('fontSelect');
+      if (fs) fs.value = data.font;
+    }
+    if (data.fontSize) {
+      changeFontSize(data.fontSize);
+      const fr = document.getElementById('fontSizeRange');
+      if (fr) fr.value = data.fontSize;
+    }
+  }
+
+  function addEntry() {
+    let shekels    = Number(document.getElementById('shekelsInput').value || 0);
+    let hours      = Number(document.getElementById('hoursInput').value   || 0);
+    let minutes    = Number(document.getElementById('minutesInput').value || 0);
+    let totalHours = hours + minutes/60;
+
+    if (!data.entries[today]) data.entries[today] = {total:0, hours:0, count:0};
+    data.entries[today].total += shekels;
+    data.entries[today].hours += totalHours;
+    data.entries[today].count += 1;
+
+    const nowStr = new Date().toISOString();
+    data.entries[today]._timestamp = nowStr;
+    lastEntryTimestamp = new Date();
+    document.getElementById('lastEntryDisplay').innerText = lastEntryTimestamp.toLocaleString();
+
+    document.getElementById('lastEntryDisplay').innerText = lastEntryTimestamp.toLocaleString();
+
+    if (shekels > biggestEntryAmount) {
+      biggestEntryAmount = shekels;
+      document.getElementById('biggestEntry').innerText = `$${biggestEntryAmount.toFixed(2)}`;
+    }
+
+    document.getElementById('shekelsInput').value = '';
+    document.getElementById('hoursInput').value   = '';
+    document.getElementById('minutesInput').value = '';
+
+    updateAll();
+  }
+
+  function updateAll() {
+    updateDisplay();
+    updateEntryCount();
+    updateMonthly();
+    updateProgress();
+    updateChart();
+    updateCalendar();
+    updateCountdown();
+    const gi = document.getElementById('goalInput');
+    if (gi) gi.value = data.goal || 700;
+  }
+
+  function updateEntryCount() {
+    document.getElementById('entryCount').innerText = 'Entries: '+(data.entries[today]?.count||0);
+  }
+
+  function updateDisplay() {
+    let d   = data.entries[today] || {total:0, hours:0};
+    let avg = d.hours > 0 ? d.total/d.hours : 0;
+    document.getElementById('todayTotal').innerText = '$'+d.total.toFixed(2);
+    document.getElementById('todayAvg').innerText   = '$'+avg.toFixed(2);
+  }
+
+  function updateMonthly() {
+    let monthly=0, yearly=0;
+    let now=new Date(), year=now.getFullYear(), month=now.getMonth();
+    Object.entries(data.entries).forEach(([date,val]) => {
+      let d = new Date(date+'T00:00:00');
+      if (d.getFullYear()===year) {
+        yearly += val.total;
+        if (d.getMonth()===month) monthly += val.total;
+      }
+    });
+    document.getElementById('monthlyDisplay').innerText = '$'+monthly.toFixed(2);
+    document.getElementById('yearlyDisplay').innerText  = '$'+yearly.toFixed(2);
+  }
+
+  function updateProgress() {
+    let total=0;
+
+    // FIX: only include current week (local)
+    let now = new Date();
+    let day = now.getDay();
+    let weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - day);
+    weekStart.setHours(0,0,0,0);
+
+    Object.entries(data.entries).forEach(([date,val]) => {
+      let d = new Date(date + 'T00:00:00');
+      if (d >= weekStart && d <= now) {
+        total += val.total;
+      }
+    });
+
+    let goal      = Number(document.getElementById('goalInput').value||700);
+    data.goal     = goal;
+    let percent   = Math.min((total/goal)*100, 100);
+    let remaining = Math.max(goal-total, 0);
+    document.getElementById('progressBar').style.width = percent+'%';
+    document.getElementById('progressBar').innerText   = percent.toFixed(0)+'%';
+    document.getElementById('progressText').innerText  = 'Earned This Week: $'+total.toFixed(2);
+    document.getElementById('remainingText').innerText = 'Remaining: $'+remaining.toFixed(2);
+  }
+
+  function updateCountdown() {
+    let now  = new Date();
+
+    // FIX: correct next week boundary (Sunday)
+    let dTil = (7 - now.getDay()) % 7 || 7;
+    let next = new Date(now);
+    next.setDate(now.getDate() + dTil);
+    next.setHours(0,0,0,0);
+
+    let diff=next-now, s=Math.floor(diff/1000);
+    let d=Math.floor(s/86400); s%=86400;
+    let h=Math.floor(s/3600);  s%=3600;
+    let m=Math.floor(s/60), sc=s%60;
+    document.getElementById('countdown').innerText = `Next Week In: ${d}d ${h}h ${m}m ${sc}s`;
+  }
+
+  function updateChart() {
+    let values=[0,0,0,0,0,0,0];
+    Object.entries(data.entries).forEach(([date,val]) => {
+      let idx=(new Date(date+'T00:00:00').getDay()+6)%7;
+      values[idx]+=val.total;
+    });
+    if (chartObj) chartObj.destroy();
+    const ctx     = document.getElementById('chart').getContext('2d');
+    const style   = getComputedStyle(document.body);
+    const accent  = style.getPropertyValue('--accent').trim()  || '#4facfe';
+    const accent2 = style.getPropertyValue('--accent2').trim() || '#00f2fe';
+    const txtCol  = style.getPropertyValue('--text').trim()    || '#111';
+
+    chartObj = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        datasets:[{
+          label: 'Shekels',
+          data: values,
+          fill: false,
+          borderColor: accent,
+          backgroundColor: accent,
+          borderWidth: 2,
+          tension: 0.4,
+          pointBackgroundColor: accent
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { beginAtZero:true, ticks:{color:txtCol}, grid:{color:'rgba(128,128,128,0.2)'} },
+          x: { ticks:{color:txtCol}, grid:{color:'rgba(128,128,128,0.2)'} }
+        },
+        plugins: { legend:{ labels:{color:txtCol} } }
+      }
+    });
+  }
+
+  function updateCalendar() {
+    const cal = document.getElementById('calendar');
+    cal.innerHTML = '';
+    let now=new Date(), year=now.getFullYear(), month=now.getMonth();
+    document.getElementById('calendarTitle').innerText =
+      'Calendar — '+now.toLocaleString('default',{month:'long'})+' '+year;
+    const firstDay    = new Date(year,month,1).getDay();
+    const daysInMonth = new Date(year,month+1,0).getDate();
+    ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(h => {
+      let div=document.createElement('div');
+      div.className='calendar-day calendar-header';
+      div.innerText=h;
+      cal.appendChild(div);
+    });
+    for (let i=0;i<firstDay;i++) cal.appendChild(document.createElement('div'));
+    for (let day=1;day<=daysInMonth;day++) {
+
+      // FIX: local date key instead of toISOString
+      let dateStr = formatLocalDate(new Date(year, month, day));
+
+      let div=document.createElement('div');
+      div.className='calendar-day';
+      if (dateStr===today) div.classList.add('today-highlight');
+      let e=data.entries[dateStr];
+      div.innerText=day+'\n$'+(e?.total||0).toFixed(2)+'\nH:'+(e?.hours?e.hours.toFixed(1):'0');
+      cal.appendChild(div);
+    }
+  }
+
+  document.getElementById('goalInput').addEventListener('input', updateProgress);
+  setInterval(updateCountdown, 1000);
+
+  const saved = localStorage.getItem('shekelsApp');
+  if (saved) {
+    try {
+      data = JSON.parse(saved);
+      applySettings();
+      restoreCardPositions();
+      biggestEntryAmount = 0;
+      lastEntryTimestamp = null;
+      Object.values(data.entries).forEach(entry => {
+        if (entry._timestamp) {
+          if (!lastEntryTimestamp || new Date(entry._timestamp) > new Date(lastEntryTimestamp))
+            lastEntryTimestamp = entry._timestamp;
+        }
+        if (entry.total > biggestEntryAmount) {
+          biggestEntryAmount = entry.total;
+        }
+      });
+      if (lastEntryTimestamp) {
+        document.getElementById('lastEntryDisplay').innerText = new Date(lastEntryTimestamp).toLocaleString();
+      } else {
+        document.getElementById('lastEntryDisplay').innerText = 'No entries yet.';
+      }
+      document.getElementById('biggestEntry').innerText = `$${biggestEntryAmount.toFixed(2)}`;
+    } catch(e) {}
+  }
+  updateAll();
+</script>
+</body>
+</html>
